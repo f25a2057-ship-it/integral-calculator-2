@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Integral Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.2/math.min.js"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f4f9; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 350px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #result { margin-top: 20px; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h3>Definite Integral Calculator</h3>
+    <label>Function f(x):</label>
+    <input type="text" id="fn" placeholder="e.g., x^2 + sin(x)">
+    <label>Lower Limit (a):</label>
+    <input type="number" id="lower" value="0">
+    <label>Upper Limit (b):</label>
+    <input type="number" id="upper" value="1">
+    <button onclick="calculate()">Calculate</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    function calculate() {
+        const expression = document.getElementById('fn').value;
+        const a = parseFloat(document.getElementById('lower').value);
+        const b = parseFloat(document.getElementById('upper').value);
+        const resultDiv = document.getElementById('result');
+
+        try {
+            // Compile the expression
+            const code = math.compile(expression);
+            
+            // Define the integral using numerical integration (math.integrate is not built-in, 
+            // so we use a simple trapz rule approximation for this standalone demo)
+            const steps = 1000;
+            const h = (b - a) / steps;
+            let sum = 0;
+            for (let i = 0; i < steps; i++) {
+                let x = a + i * h;
+                sum += code.evaluate({x: x});
+            }
+            const result = sum * h;
+            
+            resultDiv.innerHTML = "Result: " + result.toFixed(6);
+            resultDiv.style.color = "#333";
+        } catch (err) {
+            resultDiv.innerHTML = "Error: Check your syntax.";
+            resultDiv.style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
